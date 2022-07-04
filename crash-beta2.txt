@@ -1,0 +1,378 @@
+
+Incident Identifier: D04D94C6-02DC-4A66-8DB5-644AF73498D7
+CrashReporter Key:   b8d9a53cecb4db4518724201447d8945fe50bb89
+Hardware Model:      iPad13,16
+Process:             com.apple.WebKit.WebContent [482]
+Path:                /private/preboot/Cryptexes/OS/System/Library/Frameworks/WebKit.framework/XPCServices/com.apple.WebKit.WebContent.xpc/com.apple.WebKit.WebContent
+Identifier:          com.apple.WebKit.WebContent
+Version:             8614 (8614.1.16.10.5)
+Code Type:           ARM-64 (Native)
+Role:                Foreground
+Parent Process:      launchd [1]
+Coalition:           com.figma.FigmaMirror [624]
+
+Date/Time:           2022-06-22 13:34:53.1431 -0700
+Launch Time:         2022-06-22 13:34:51.5544 -0700
+OS Version:          iPhone OS 16.0 (20A5303i)
+Release Type:        Beta
+Report Version:      104
+
+Exception Type:  EXC_BREAKPOINT (SIGKILL)
+Exception Codes: 0x0000000000000001, 0x0000000196bd823c
+Termination Reason: PAC_EXCEPTION 1 
+
+Triggered by Thread:  0
+
+Kernel Triage:
+VM - pmap_enter retried due to resource shortage
+VM - pmap_enter retried due to resource shortage
+VM - pmap_enter retried due to resource shortage
+VM - pmap_enter retried due to resource shortage
+VM - pmap_enter retried due to resource shortage
+
+
+Thread 0 name:   Dispatch queue: com.apple.main-thread
+Thread 0 Crashed:
+0   JavaScriptCore                	       0x196bd823c WTFCrashWithInfo(int, char const*, char const*, int) + 20
+1   JavaScriptCore                	       0x197dcc2e0 slow_path_wasm_loop_osr + 2040
+2   JavaScriptCore                	       0x196fdc898 wasmLLIntPCRangeStart + 7284
+3   ???                           	       0xce24c8628 ???
+4   ???                           	       0xce24c8628 ???
+5   ???                           	       0xce24c86c8 ???
+6   ???                           	       0xce2fdd7cc ???
+7   ???                           	       0xce24c8428 ???
+8   ???                           	       0xce24c8248 ???
+9   ???                           	       0xce24c8248 ???
+10  ???                           	       0xce24c8248 ???
+11  ???                           	       0xce24c8248 ???
+12  ???                           	       0xce24c8248 ???
+13  ???                           	       0xce24c8248 ???
+14  ???                           	       0xce24c8248 ???
+15  ???                           	       0xce24c8248 ???
+16  ???                           	       0xce24c8248 ???
+17  ???                           	       0xce24c8248 ???
+18  ???                           	       0xce24c8248 ???
+19  ???                           	       0xce27ff6b4 ???
+20  ???                           	       0xce2587b20 ???
+21  ???                           	       0xce25fee18 ???
+22  ???                           	       0xce26cfbb4 ???
+23  ???                           	       0xce24c8848 ???
+24  JavaScriptCore                	       0x19774dcf8 JSC::Interpreter::executeCall(JSC::JSGlobalObject*, JSC::JSObject*, JSC::CallData const&, JSC::JSValue, JSC::ArgList const&) + 508
+25  JavaScriptCore                	       0x1979e3bd8 JSC::profiledCall(JSC::JSGlobalObject*, JSC::ProfilingReason, JSC::JSValue, JSC::CallData const&, JSC::JSValue, JSC::ArgList const&) + 92
+26  JavaScriptCore                	       0x197b10a00 JSC::JSMicrotask::run(JSC::JSGlobalObject*) + 292
+27  WebCore                       	       0x19c1bc8e8 WebCore::JSMicrotaskCallback::call() + 156
+28  WebCore                       	       0x19c55ac0c WebCore::MicrotaskQueue::performMicrotaskCheckpoint() + 412
+29  WebCore                       	       0x19c1bd2b4 WebCore::JSExecState::didLeaveScriptContext(JSC::JSGlobalObject*) + 228
+30  WebCore                       	       0x19c1b4a54 WebCore::JSExecState::~JSExecState() + 108
+31  WebCore                       	       0x19c1b18bc WebCore::JSEventListener::handleEvent(WebCore::ScriptExecutionContext&, WebCore::Event&) + 1484
+32  WebCore                       	       0x19c53c630 WebCore::EventTarget::innerInvokeEventListeners(WebCore::Event&, WTF::Vector<WTF::RefPtr<WebCore::RegisteredEventListener, WTF::RawPtrTraits<WebCore::RegisteredEventListener>, WTF::DefaultRefDerefTraits<WebCore::RegisteredEventListener> >, 1ul, WTF::CrashOnOverflow, 2ul, WTF::FastMalloc>, WebCore::EventTarget::EventInvokePhase) + 540
+33  WebCore                       	       0x19c53c13c WebCore::EventTarget::fireEventListeners(WebCore::Event&, WebCore::EventTarget::EventInvokePhase) + 412
+34  WebCore                       	       0x19c53bec8 WebCore::EventTarget::dispatchEvent(WebCore::Event&) + 276
+35  WebCore                       	       0x19c09c034 WTF::Detail::CallableWrapper<WebCore::WebSocket::didReceiveMessage(WTF::String&&)::$_13, void>::call() + 224
+36  WebCore                       	       0x19c53528c WebCore::EventLoop::run() + 168
+37  WebCore                       	       0x19c5d2074 WebCore::WindowEventLoop::didReachTimeToRun() + 36
+38  WebCore                       	       0x19cd6e188 WTF::Detail::CallableWrapper<WebCore::ThreadTimers::setSharedTimer(WebCore::SharedTimer*)::$_0, void>::call() + 216
+39  WebCore                       	       0x19cd95d44 WebCore::timerFired(__CFRunLoopTimer*, void*) + 68
+40  CoreFoundation                	       0x186804640 __CFRUNLOOP_IS_CALLING_OUT_TO_A_TIMER_CALLBACK_FUNCTION__ + 32
+41  CoreFoundation                	       0x18678a7e0 __CFRunLoopDoTimer + 940
+42  CoreFoundation                	       0x186785158 __CFRunLoopDoTimers + 288
+43  CoreFoundation                	       0x186763918 __CFRunLoopRun + 1896
+44  CoreFoundation                	       0x186777080 CFRunLoopRunSpecific + 612
+45  Foundation                    	       0x187368414 -[NSRunLoop(NSRunLoop) runMode:beforeDate:] + 212
+46  Foundation                    	       0x187368bbc -[NSRunLoop(NSRunLoop) run] + 64
+47  libxpc.dylib                  	       0x1fd3f3e04 _xpc_objc_main + 496
+48  libxpc.dylib                  	       0x1fd3f60f0 xpc_main + 156
+49  WebKit                        	       0x19a8d4f34 WebKit::XPCServiceMain(int, char const**) + 68
+50  dyld                          	       0x2161038f0 start + 2352
+
+Thread 1 name:  JavaScriptCore libpas scavenger
+Thread 1:
+0   libsystem_kernel.dylib        	       0x1c548247c __psynch_cvwait + 8
+1   libsystem_pthread.dylib       	       0x1fd3c7280 _pthread_cond_wait + 1232
+2   JavaScriptCore                	       0x196cc1f3c scavenger_thread_main + 1312
+3   libsystem_pthread.dylib       	       0x1fd3c0908 _pthread_start + 148
+4   libsystem_pthread.dylib       	       0x1fd3bfdec thread_start + 8
+
+Thread 2:
+0   libsystem_pthread.dylib       	       0x1fd3bfdd8 start_wqthread + 0
+
+Thread 3:
+0   libsystem_pthread.dylib       	       0x1fd3bfdd8 start_wqthread + 0
+
+Thread 4:
+0   libsystem_pthread.dylib       	       0x1fd3bfdd8 start_wqthread + 0
+
+Thread 5 name:  JIT Worklist Helper Thread
+Thread 5:
+0   libsystem_kernel.dylib        	       0x1c548247c __psynch_cvwait + 8
+1   libsystem_pthread.dylib       	       0x1fd3c7280 _pthread_cond_wait + 1232
+2   JavaScriptCore                	       0x196c19344 WTF::ParkingLot::parkConditionallyImpl(void const*, WTF::ScopedLambda<bool ()> const&, WTF::ScopedLambda<void ()> const&, WTF::TimeWithDynamicClockType const&) + 1808
+3   JavaScriptCore                	       0x196bdcc2c bool WTF::Condition::waitUntilUnchecked<WTF::Lock>(WTF::Lock&, WTF::TimeWithDynamicClockType const&) + 304
+4   JavaScriptCore                	       0x196bdd0a8 WTF::Detail::CallableWrapper<WTF::AutomaticThread::start(WTF::AbstractLocker const&)::$_0, void>::call() + 248
+5   JavaScriptCore                	       0x196c3ba5c WTF::Thread::entryPoint(WTF::Thread::NewThreadContext*) + 352
+6   JavaScriptCore                	       0x196c3db88 WTF::wtfThreadEntryPoint(void*) + 16
+7   libsystem_pthread.dylib       	       0x1fd3c0908 _pthread_start + 148
+8   libsystem_pthread.dylib       	       0x1fd3bfdec thread_start + 8
+
+Thread 6 name:  JIT Worklist Helper Thread
+Thread 6:
+0   libsystem_kernel.dylib        	       0x1c548247c __psynch_cvwait + 8
+1   libsystem_pthread.dylib       	       0x1fd3c7280 _pthread_cond_wait + 1232
+2   JavaScriptCore                	       0x196c19344 WTF::ParkingLot::parkConditionallyImpl(void const*, WTF::ScopedLambda<bool ()> const&, WTF::ScopedLambda<void ()> const&, WTF::TimeWithDynamicClockType const&) + 1808
+3   JavaScriptCore                	       0x196bdcc2c bool WTF::Condition::waitUntilUnchecked<WTF::Lock>(WTF::Lock&, WTF::TimeWithDynamicClockType const&) + 304
+4   JavaScriptCore                	       0x196bdd0a8 WTF::Detail::CallableWrapper<WTF::AutomaticThread::start(WTF::AbstractLocker const&)::$_0, void>::call() + 248
+5   JavaScriptCore                	       0x196c3ba5c WTF::Thread::entryPoint(WTF::Thread::NewThreadContext*) + 352
+6   JavaScriptCore                	       0x196c3db88 WTF::wtfThreadEntryPoint(void*) + 16
+7   libsystem_pthread.dylib       	       0x1fd3c0908 _pthread_start + 148
+8   libsystem_pthread.dylib       	       0x1fd3bfdec thread_start + 8
+
+Thread 7 name:  JIT Worklist Helper Thread
+Thread 7:
+0   libsystem_kernel.dylib        	       0x1c548247c __psynch_cvwait + 8
+1   libsystem_pthread.dylib       	       0x1fd3c7280 _pthread_cond_wait + 1232
+2   JavaScriptCore                	       0x196c19344 WTF::ParkingLot::parkConditionallyImpl(void const*, WTF::ScopedLambda<bool ()> const&, WTF::ScopedLambda<void ()> const&, WTF::TimeWithDynamicClockType const&) + 1808
+3   JavaScriptCore                	       0x196bdcc2c bool WTF::Condition::waitUntilUnchecked<WTF::Lock>(WTF::Lock&, WTF::TimeWithDynamicClockType const&) + 304
+4   JavaScriptCore                	       0x196bdd0a8 WTF::Detail::CallableWrapper<WTF::AutomaticThread::start(WTF::AbstractLocker const&)::$_0, void>::call() + 248
+5   JavaScriptCore                	       0x196c3ba5c WTF::Thread::entryPoint(WTF::Thread::NewThreadContext*) + 352
+6   JavaScriptCore                	       0x196c3db88 WTF::wtfThreadEntryPoint(void*) + 16
+7   libsystem_pthread.dylib       	       0x1fd3c0908 _pthread_start + 148
+8   libsystem_pthread.dylib       	       0x1fd3bfdec thread_start + 8
+
+Thread 8 name:  Heap Helper Thread
+Thread 8:
+0   libsystem_kernel.dylib        	       0x1c548247c __psynch_cvwait + 8
+1   libsystem_pthread.dylib       	       0x1fd3c7280 _pthread_cond_wait + 1232
+2   JavaScriptCore                	       0x196c19344 WTF::ParkingLot::parkConditionallyImpl(void const*, WTF::ScopedLambda<bool ()> const&, WTF::ScopedLambda<void ()> const&, WTF::TimeWithDynamicClockType const&) + 1808
+3   JavaScriptCore                	       0x196bdcc2c bool WTF::Condition::waitUntilUnchecked<WTF::Lock>(WTF::Lock&, WTF::TimeWithDynamicClockType const&) + 304
+4   JavaScriptCore                	       0x196bdd0a8 WTF::Detail::CallableWrapper<WTF::AutomaticThread::start(WTF::AbstractLocker const&)::$_0, void>::call() + 248
+5   JavaScriptCore                	       0x196c3ba5c WTF::Thread::entryPoint(WTF::Thread::NewThreadContext*) + 352
+6   JavaScriptCore                	       0x196c3db88 WTF::wtfThreadEntryPoint(void*) + 16
+7   libsystem_pthread.dylib       	       0x1fd3c0908 _pthread_start + 148
+8   libsystem_pthread.dylib       	       0x1fd3bfdec thread_start + 8
+
+Thread 9 name:  Heap Helper Thread
+Thread 9:
+0   libsystem_kernel.dylib        	       0x1c548247c __psynch_cvwait + 8
+1   libsystem_pthread.dylib       	       0x1fd3c7280 _pthread_cond_wait + 1232
+2   JavaScriptCore                	       0x196c19344 WTF::ParkingLot::parkConditionallyImpl(void const*, WTF::ScopedLambda<bool ()> const&, WTF::ScopedLambda<void ()> const&, WTF::TimeWithDynamicClockType const&) + 1808
+3   JavaScriptCore                	       0x196bdcc2c bool WTF::Condition::waitUntilUnchecked<WTF::Lock>(WTF::Lock&, WTF::TimeWithDynamicClockType const&) + 304
+4   JavaScriptCore                	       0x196bdd0a8 WTF::Detail::CallableWrapper<WTF::AutomaticThread::start(WTF::AbstractLocker const&)::$_0, void>::call() + 248
+5   JavaScriptCore                	       0x196c3ba5c WTF::Thread::entryPoint(WTF::Thread::NewThreadContext*) + 352
+6   JavaScriptCore                	       0x196c3db88 WTF::wtfThreadEntryPoint(void*) + 16
+7   libsystem_pthread.dylib       	       0x1fd3c0908 _pthread_start + 148
+8   libsystem_pthread.dylib       	       0x1fd3bfdec thread_start + 8
+
+Thread 10 name:  Heap Helper Thread
+Thread 10:
+0   libsystem_kernel.dylib        	       0x1c548247c __psynch_cvwait + 8
+1   libsystem_pthread.dylib       	       0x1fd3c7280 _pthread_cond_wait + 1232
+2   JavaScriptCore                	       0x196c19344 WTF::ParkingLot::parkConditionallyImpl(void const*, WTF::ScopedLambda<bool ()> const&, WTF::ScopedLambda<void ()> const&, WTF::TimeWithDynamicClockType const&) + 1808
+3   JavaScriptCore                	       0x196bdcc2c bool WTF::Condition::waitUntilUnchecked<WTF::Lock>(WTF::Lock&, WTF::TimeWithDynamicClockType const&) + 304
+4   JavaScriptCore                	       0x196bdd0a8 WTF::Detail::CallableWrapper<WTF::AutomaticThread::start(WTF::AbstractLocker const&)::$_0, void>::call() + 248
+5   JavaScriptCore                	       0x196c3ba5c WTF::Thread::entryPoint(WTF::Thread::NewThreadContext*) + 352
+6   JavaScriptCore                	       0x196c3db88 WTF::wtfThreadEntryPoint(void*) + 16
+7   libsystem_pthread.dylib       	       0x1fd3c0908 _pthread_start + 148
+8   libsystem_pthread.dylib       	       0x1fd3bfdec thread_start + 8
+
+Thread 11 name:  Heap Helper Thread
+Thread 11:
+0   libsystem_kernel.dylib        	       0x1c548247c __psynch_cvwait + 8
+1   libsystem_pthread.dylib       	       0x1fd3c7280 _pthread_cond_wait + 1232
+2   JavaScriptCore                	       0x196c19344 WTF::ParkingLot::parkConditionallyImpl(void const*, WTF::ScopedLambda<bool ()> const&, WTF::ScopedLambda<void ()> const&, WTF::TimeWithDynamicClockType const&) + 1808
+3   JavaScriptCore                	       0x196bdcc2c bool WTF::Condition::waitUntilUnchecked<WTF::Lock>(WTF::Lock&, WTF::TimeWithDynamicClockType const&) + 304
+4   JavaScriptCore                	       0x196bdd0a8 WTF::Detail::CallableWrapper<WTF::AutomaticThread::start(WTF::AbstractLocker const&)::$_0, void>::call() + 248
+5   JavaScriptCore                	       0x196c3ba5c WTF::Thread::entryPoint(WTF::Thread::NewThreadContext*) + 352
+6   JavaScriptCore                	       0x196c3db88 WTF::wtfThreadEntryPoint(void*) + 16
+7   libsystem_pthread.dylib       	       0x1fd3c0908 _pthread_start + 148
+8   libsystem_pthread.dylib       	       0x1fd3bfdec thread_start + 8
+
+Thread 12 name:  Heap Helper Thread
+Thread 12:
+0   libsystem_kernel.dylib        	       0x1c548247c __psynch_cvwait + 8
+1   libsystem_pthread.dylib       	       0x1fd3c7280 _pthread_cond_wait + 1232
+2   JavaScriptCore                	       0x196c19344 WTF::ParkingLot::parkConditionallyImpl(void const*, WTF::ScopedLambda<bool ()> const&, WTF::ScopedLambda<void ()> const&, WTF::TimeWithDynamicClockType const&) + 1808
+3   JavaScriptCore                	       0x196bdcc2c bool WTF::Condition::waitUntilUnchecked<WTF::Lock>(WTF::Lock&, WTF::TimeWithDynamicClockType const&) + 304
+4   JavaScriptCore                	       0x196bdd0a8 WTF::Detail::CallableWrapper<WTF::AutomaticThread::start(WTF::AbstractLocker const&)::$_0, void>::call() + 248
+5   JavaScriptCore                	       0x196c3ba5c WTF::Thread::entryPoint(WTF::Thread::NewThreadContext*) + 352
+6   JavaScriptCore                	       0x196c3db88 WTF::wtfThreadEntryPoint(void*) + 16
+7   libsystem_pthread.dylib       	       0x1fd3c0908 _pthread_start + 148
+8   libsystem_pthread.dylib       	       0x1fd3bfdec thread_start + 8
+
+Thread 13 name:  Heap Helper Thread
+Thread 13:
+0   libsystem_kernel.dylib        	       0x1c548247c __psynch_cvwait + 8
+1   libsystem_pthread.dylib       	       0x1fd3c7280 _pthread_cond_wait + 1232
+2   JavaScriptCore                	       0x196c19344 WTF::ParkingLot::parkConditionallyImpl(void const*, WTF::ScopedLambda<bool ()> const&, WTF::ScopedLambda<void ()> const&, WTF::TimeWithDynamicClockType const&) + 1808
+3   JavaScriptCore                	       0x196bdcc2c bool WTF::Condition::waitUntilUnchecked<WTF::Lock>(WTF::Lock&, WTF::TimeWithDynamicClockType const&) + 304
+4   JavaScriptCore                	       0x196bdd0a8 WTF::Detail::CallableWrapper<WTF::AutomaticThread::start(WTF::AbstractLocker const&)::$_0, void>::call() + 248
+5   JavaScriptCore                	       0x196c3ba5c WTF::Thread::entryPoint(WTF::Thread::NewThreadContext*) + 352
+6   JavaScriptCore                	       0x196c3db88 WTF::wtfThreadEntryPoint(void*) + 16
+7   libsystem_pthread.dylib       	       0x1fd3c0908 _pthread_start + 148
+8   libsystem_pthread.dylib       	       0x1fd3bfdec thread_start + 8
+
+Thread 14 name:  Heap Helper Thread
+Thread 14:
+0   libsystem_kernel.dylib        	       0x1c548247c __psynch_cvwait + 8
+1   libsystem_pthread.dylib       	       0x1fd3c7280 _pthread_cond_wait + 1232
+2   JavaScriptCore                	       0x196c19344 WTF::ParkingLot::parkConditionallyImpl(void const*, WTF::ScopedLambda<bool ()> const&, WTF::ScopedLambda<void ()> const&, WTF::TimeWithDynamicClockType const&) + 1808
+3   JavaScriptCore                	       0x196bdcc2c bool WTF::Condition::waitUntilUnchecked<WTF::Lock>(WTF::Lock&, WTF::TimeWithDynamicClockType const&) + 304
+4   JavaScriptCore                	       0x196bdd0a8 WTF::Detail::CallableWrapper<WTF::AutomaticThread::start(WTF::AbstractLocker const&)::$_0, void>::call() + 248
+5   JavaScriptCore                	       0x196c3ba5c WTF::Thread::entryPoint(WTF::Thread::NewThreadContext*) + 352
+6   JavaScriptCore                	       0x196c3db88 WTF::wtfThreadEntryPoint(void*) + 16
+7   libsystem_pthread.dylib       	       0x1fd3c0908 _pthread_start + 148
+8   libsystem_pthread.dylib       	       0x1fd3bfdec thread_start + 8
+
+Thread 15 name:  WebCore: Worker
+Thread 15:
+0   libsystem_kernel.dylib        	       0x1c548247c __psynch_cvwait + 8
+1   libsystem_pthread.dylib       	       0x1fd3c7280 _pthread_cond_wait + 1232
+2   JavaScriptCore                	       0x196c19344 WTF::ParkingLot::parkConditionallyImpl(void const*, WTF::ScopedLambda<bool ()> const&, WTF::ScopedLambda<void ()> const&, WTF::TimeWithDynamicClockType const&) + 1808
+3   WebCore                       	       0x19b48d5a4 bool WTF::Condition::waitUntilUnchecked<WTF::Lock>(WTF::Lock&, WTF::TimeWithDynamicClockType const&) + 196
+4   WebCore                       	       0x19d5106a0 WebCore::WorkerDedicatedRunLoop::runInMode(WebCore::WorkerOrWorkletGlobalScope*, WebCore::ModePredicate const&) + 632
+5   WebCore                       	       0x19d5103cc WebCore::WorkerDedicatedRunLoop::run(WebCore::WorkerOrWorkletGlobalScope*) + 104
+6   WebCore                       	       0x19d50b0c4 WebCore::WorkerOrWorkletThread::workerOrWorkletThread() + 1656
+7   JavaScriptCore                	       0x196c3ba5c WTF::Thread::entryPoint(WTF::Thread::NewThreadContext*) + 352
+8   JavaScriptCore                	       0x196c3db88 WTF::wtfThreadEntryPoint(void*) + 16
+9   libsystem_pthread.dylib       	       0x1fd3c0908 _pthread_start + 148
+10  libsystem_pthread.dylib       	       0x1fd3bfdec thread_start + 8
+
+Thread 16 name:  Wasm Worklist Helper Thread
+Thread 16:
+0   libsystem_kernel.dylib        	       0x1c548247c __psynch_cvwait + 8
+1   libsystem_pthread.dylib       	       0x1fd3c7280 _pthread_cond_wait + 1232
+2   JavaScriptCore                	       0x196c19424 WTF::ParkingLot::parkConditionallyImpl(void const*, WTF::ScopedLambda<bool ()> const&, WTF::ScopedLambda<void ()> const&, WTF::TimeWithDynamicClockType const&) + 2032
+3   JavaScriptCore                	       0x196c09e10 WTF::LockAlgorithm<unsigned char, (unsigned char)1, (unsigned char)2, WTF::EmptyLockHooks<unsigned char> >::lockSlow(WTF::Atomic<unsigned char>&) + 216
+4   JavaScriptCore                	       0x197cc89c8 JSC::Wasm::BBQPlan::work(JSC::Wasm::Plan::CompilationEffort) + 3256
+5   JavaScriptCore                	       0x197de41b4 JSC::Wasm::Worklist::Thread::work() + 132
+6   JavaScriptCore                	       0x196bdd190 WTF::Detail::CallableWrapper<WTF::AutomaticThread::start(WTF::AbstractLocker const&)::$_0, void>::call() + 480
+7   JavaScriptCore                	       0x196c3ba5c WTF::Thread::entryPoint(WTF::Thread::NewThreadContext*) + 352
+8   JavaScriptCore                	       0x196c3db88 WTF::wtfThreadEntryPoint(void*) + 16
+9   libsystem_pthread.dylib       	       0x1fd3c0908 _pthread_start + 148
+10  libsystem_pthread.dylib       	       0x1fd3bfdec thread_start + 8
+
+Thread 17 name:  Wasm Worklist Helper Thread
+Thread 17:
+0   libsystem_kernel.dylib        	       0x1c548247c __psynch_cvwait + 8
+1   libsystem_pthread.dylib       	       0x1fd3c7280 _pthread_cond_wait + 1232
+2   JavaScriptCore                	       0x196c19424 WTF::ParkingLot::parkConditionallyImpl(void const*, WTF::ScopedLambda<bool ()> const&, WTF::ScopedLambda<void ()> const&, WTF::TimeWithDynamicClockType const&) + 2032
+3   JavaScriptCore                	       0x196c09e10 WTF::LockAlgorithm<unsigned char, (unsigned char)1, (unsigned char)2, WTF::EmptyLockHooks<unsigned char> >::lockSlow(WTF::Atomic<unsigned char>&) + 216
+4   JavaScriptCore                	       0x197cc89c8 JSC::Wasm::BBQPlan::work(JSC::Wasm::Plan::CompilationEffort) + 3256
+5   JavaScriptCore                	       0x197de41b4 JSC::Wasm::Worklist::Thread::work() + 132
+6   JavaScriptCore                	       0x196bdd190 WTF::Detail::CallableWrapper<WTF::AutomaticThread::start(WTF::AbstractLocker const&)::$_0, void>::call() + 480
+7   JavaScriptCore                	       0x196c3ba5c WTF::Thread::entryPoint(WTF::Thread::NewThreadContext*) + 352
+8   JavaScriptCore                	       0x196c3db88 WTF::wtfThreadEntryPoint(void*) + 16
+9   libsystem_pthread.dylib       	       0x1fd3c0908 _pthread_start + 148
+10  libsystem_pthread.dylib       	       0x1fd3bfdec thread_start + 8
+
+Thread 18 name:  Wasm Worklist Helper Thread
+Thread 18:
+0   JavaScriptCore                	       0x19718aaa8 std::__1::default_delete<JSC::B3::Air::BasicBlock>::operator()(JSC::B3::Air::BasicBlock*) const + 244
+1   JavaScriptCore                	       0x197192a88 JSC::B3::Air::Code::~Code() + 572
+2   JavaScriptCore                	       0x197192a88 JSC::B3::Air::Code::~Code() + 572
+3   JavaScriptCore                	       0x1970ed454 JSC::B3::Procedure::~Procedure() + 96
+4   JavaScriptCore                	       0x197cd0578 JSC::Wasm::CompilationContext::~CompilationContext() + 64
+5   JavaScriptCore                	       0x197cc8894 JSC::Wasm::BBQPlan::work(JSC::Wasm::Plan::CompilationEffort) + 2948
+6   JavaScriptCore                	       0x197de41b4 JSC::Wasm::Worklist::Thread::work() + 132
+7   JavaScriptCore                	       0x196bdd190 WTF::Detail::CallableWrapper<WTF::AutomaticThread::start(WTF::AbstractLocker const&)::$_0, void>::call() + 480
+8   JavaScriptCore                	       0x196c3ba5c WTF::Thread::entryPoint(WTF::Thread::NewThreadContext*) + 352
+9   JavaScriptCore                	       0x196c3db88 WTF::wtfThreadEntryPoint(void*) + 16
+10  libsystem_pthread.dylib       	       0x1fd3c0908 _pthread_start + 148
+11  libsystem_pthread.dylib       	       0x1fd3bfdec thread_start + 8
+
+Thread 19 name:  Wasm Worklist Helper Thread
+Thread 19:
+0   JavaScriptCore                	       0x197dc01d4 JSC::Wasm::Plan::updateCallSitesToCallUs(WTF::AbstractLocker const&, JSC::Wasm::CalleeGroup&, JSC::CodeLocationLabel<(WTF::PtrTag)9389>, unsigned int, unsigned int) + 516
+1   JavaScriptCore                	       0x197cc8734 JSC::Wasm::BBQPlan::work(JSC::Wasm::Plan::CompilationEffort) + 2596
+2   JavaScriptCore                	       0x197cc8734 JSC::Wasm::BBQPlan::work(JSC::Wasm::Plan::CompilationEffort) + 2596
+3   JavaScriptCore                	       0x197de41b4 JSC::Wasm::Worklist::Thread::work() + 132
+4   JavaScriptCore                	       0x196bdd190 WTF::Detail::CallableWrapper<WTF::AutomaticThread::start(WTF::AbstractLocker const&)::$_0, void>::call() + 480
+5   JavaScriptCore                	       0x196c3ba5c WTF::Thread::entryPoint(WTF::Thread::NewThreadContext*) + 352
+6   JavaScriptCore                	       0x196c3db88 WTF::wtfThreadEntryPoint(void*) + 16
+7   libsystem_pthread.dylib       	       0x1fd3c0908 _pthread_start + 148
+8   libsystem_pthread.dylib       	       0x1fd3bfdec thread_start + 8
+
+Thread 20 name:  Wasm Worklist Helper Thread
+Thread 20:
+0   libsystem_kernel.dylib        	       0x1c548247c __psynch_cvwait + 8
+1   libsystem_pthread.dylib       	       0x1fd3c7280 _pthread_cond_wait + 1232
+2   JavaScriptCore                	       0x196c19424 WTF::ParkingLot::parkConditionallyImpl(void const*, WTF::ScopedLambda<bool ()> const&, WTF::ScopedLambda<void ()> const&, WTF::TimeWithDynamicClockType const&) + 2032
+3   JavaScriptCore                	       0x196c09e10 WTF::LockAlgorithm<unsigned char, (unsigned char)1, (unsigned char)2, WTF::EmptyLockHooks<unsigned char> >::lockSlow(WTF::Atomic<unsigned char>&) + 216
+4   JavaScriptCore                	       0x197cc89c8 JSC::Wasm::BBQPlan::work(JSC::Wasm::Plan::CompilationEffort) + 3256
+5   JavaScriptCore                	       0x197de41b4 JSC::Wasm::Worklist::Thread::work() + 132
+6   JavaScriptCore                	       0x196bdd190 WTF::Detail::CallableWrapper<WTF::AutomaticThread::start(WTF::AbstractLocker const&)::$_0, void>::call() + 480
+7   JavaScriptCore                	       0x196c3ba5c WTF::Thread::entryPoint(WTF::Thread::NewThreadContext*) + 352
+8   JavaScriptCore                	       0x196c3db88 WTF::wtfThreadEntryPoint(void*) + 16
+9   libsystem_pthread.dylib       	       0x1fd3c0908 _pthread_start + 148
+10  libsystem_pthread.dylib       	       0x1fd3bfdec thread_start + 8
+
+Thread 21 name:  Wasm Worklist Helper Thread
+Thread 21:
+0   libsystem_kernel.dylib        	       0x1c548247c __psynch_cvwait + 8
+1   libsystem_pthread.dylib       	       0x1fd3c7280 _pthread_cond_wait + 1232
+2   JavaScriptCore                	       0x196c19424 WTF::ParkingLot::parkConditionallyImpl(void const*, WTF::ScopedLambda<bool ()> const&, WTF::ScopedLambda<void ()> const&, WTF::TimeWithDynamicClockType const&) + 2032
+3   JavaScriptCore                	       0x196c09e10 WTF::LockAlgorithm<unsigned char, (unsigned char)1, (unsigned char)2, WTF::EmptyLockHooks<unsigned char> >::lockSlow(WTF::Atomic<unsigned char>&) + 216
+4   JavaScriptCore                	       0x197cc89c8 JSC::Wasm::BBQPlan::work(JSC::Wasm::Plan::CompilationEffort) + 3256
+5   JavaScriptCore                	       0x197de41b4 JSC::Wasm::Worklist::Thread::work() + 132
+6   JavaScriptCore                	       0x196bdd190 WTF::Detail::CallableWrapper<WTF::AutomaticThread::start(WTF::AbstractLocker const&)::$_0, void>::call() + 480
+7   JavaScriptCore                	       0x196c3ba5c WTF::Thread::entryPoint(WTF::Thread::NewThreadContext*) + 352
+8   JavaScriptCore                	       0x196c3db88 WTF::wtfThreadEntryPoint(void*) + 16
+9   libsystem_pthread.dylib       	       0x1fd3c0908 _pthread_start + 148
+10  libsystem_pthread.dylib       	       0x1fd3bfdec thread_start + 8
+
+Thread 22 name:  Wasm Worklist Helper Thread
+Thread 22:
+0   JavaScriptCore                	       0x1971a8d28 JSC::B3::Air::eliminateDeadCode(JSC::B3::Air::Code&)::$_5::operator()(JSC::B3::Air::Inst&) const + 196
+1   JavaScriptCore                	       0x1971a8c88 JSC::B3::Air::eliminateDeadCode(JSC::B3::Air::Code&)::$_5::operator()(JSC::B3::Air::Inst&) const + 36
+2   JavaScriptCore                	       0x19719e31c JSC::B3::Air::eliminateDeadCode(JSC::B3::Air::Code&)::$_6::operator()(JSC::B3::Air::Inst&) const + 52
+3   JavaScriptCore                	       0x1971a463c JSC::B3::Air::prepareForGeneration(JSC::B3::Air::Code&) + 1132
+4   JavaScriptCore                	       0x197cc52a4 JSC::Wasm::parseAndCompileB3(JSC::Wasm::CompilationContext&, JSC::Wasm::FunctionData const&, JSC::Wasm::TypeDefinition const&, WTF::Vector<JSC::Wasm::UnlinkedWasmToWasmCall, 0ul, WTF::CrashOnOverflow, 16ul, WTF::FastMalloc>&, JSC::Wasm::ModuleInformation const&, JSC::Wasm::MemoryMode, JSC::Wasm::CompilationMode, unsigned int, unsigned int, JSC::Wasm::TierUpCount*) + 13320
+5   JavaScriptCore                	       0x197cc8e30 JSC::Wasm::BBQPlan::compileFunction(unsigned int, JSC::Wasm::CompilationContext&, WTF::Vector<JSC::Wasm::UnlinkedWasmToWasmCall, 0ul, WTF::CrashOnOverflow, 16ul, WTF::FastMalloc>&, JSC::Wasm::TierUpCount*) + 196
+6   JavaScriptCore                	       0x197cc7df8 JSC::Wasm::BBQPlan::work(JSC::Wasm::Plan::CompilationEffort) + 232
+7   JavaScriptCore                	       0x197de41b4 JSC::Wasm::Worklist::Thread::work() + 132
+8   JavaScriptCore                	       0x196bdd190 WTF::Detail::CallableWrapper<WTF::AutomaticThread::start(WTF::AbstractLocker const&)::$_0, void>::call() + 480
+9   JavaScriptCore                	       0x196c3ba5c WTF::Thread::entryPoint(WTF::Thread::NewThreadContext*) + 352
+10  JavaScriptCore                	       0x196c3db88 WTF::wtfThreadEntryPoint(void*) + 16
+11  libsystem_pthread.dylib       	       0x1fd3c0908 _pthread_start + 148
+12  libsystem_pthread.dylib       	       0x1fd3bfdec thread_start + 8
+
+Thread 23 name:  Wasm Worklist Helper Thread
+Thread 23:
+0   libsystem_kernel.dylib        	       0x1c548247c __psynch_cvwait + 8
+1   libsystem_pthread.dylib       	       0x1fd3c7280 _pthread_cond_wait + 1232
+2   JavaScriptCore                	       0x196c19424 WTF::ParkingLot::parkConditionallyImpl(void const*, WTF::ScopedLambda<bool ()> const&, WTF::ScopedLambda<void ()> const&, WTF::TimeWithDynamicClockType const&) + 2032
+3   JavaScriptCore                	       0x196c09e10 WTF::LockAlgorithm<unsigned char, (unsigned char)1, (unsigned char)2, WTF::EmptyLockHooks<unsigned char> >::lockSlow(WTF::Atomic<unsigned char>&) + 216
+4   JavaScriptCore                	       0x197cc89c8 JSC::Wasm::BBQPlan::work(JSC::Wasm::Plan::CompilationEffort) + 3256
+5   JavaScriptCore                	       0x197de41b4 JSC::Wasm::Worklist::Thread::work() + 132
+6   JavaScriptCore                	       0x196bdd190 WTF::Detail::CallableWrapper<WTF::AutomaticThread::start(WTF::AbstractLocker const&)::$_0, void>::call() + 480
+7   JavaScriptCore                	       0x196c3ba5c WTF::Thread::entryPoint(WTF::Thread::NewThreadContext*) + 352
+8   JavaScriptCore                	       0x196c3db88 WTF::wtfThreadEntryPoint(void*) + 16
+9   libsystem_pthread.dylib       	       0x1fd3c0908 _pthread_start + 148
+10  libsystem_pthread.dylib       	       0x1fd3bfdec thread_start + 8
+
+
+Thread 0 crashed with ARM Thread State (64-bit):
+    x0: 0x00000000000000cb   x1: 0x0000000197ff76c2   x2: 0x0000000197ff76db   x3: 0x00000000000000f1
+    x4: 0x00001a0000001b00   x5: 0x0000000000000000   x6: 0x0000000000000000   x7: 0x0000000000000000
+    x8: 0x0000000000000021   x9: 0x0000000000000001  x10: 0x000000012a1929ec  x11: 0x000000012a1929f0
+   x12: 0x0000000000000100  x13: 0x0000000000000100  x14: 0x0000000000000000  x15: 0x00001a0000001b00
+   x16: 0x0000000000001b01  x17: 0x00001b0100001b00  x18: 0x0000000000000000  x19: 0x000000016ef33f70
+   x20: 0x000000012d63a400  x21: 0x000000012e41e200  x22: 0x000000012abf67e0  x23: 0x0000000129fa20c8
+   x24: 0x00000001e696c000  x25: 0x0000000129fe73f0  x26: 0x0000000129fa0000  x27: 0xfffe000000000000
+   x28: 0xfffe000000000002   fp: 0x000000016ef33ce0   lr: 0x0000000197dcc2e0
+    sp: 0x000000016ef33c40   pc: 0x0000000196bd823c cpsr: 0x20001000
+   far: 0x000000012dd1c000  esr: 0xf200c471 (Breakpoint) pointer authentication trap IB
+
+Binary Images:
+       0x196bce000 -        0x198005fe1 JavaScriptCore arm64e  <468d3b544df73082a87cad79fa7c4ed8> /System/Library/Frameworks/JavaScriptCore.framework/JavaScriptCore
+               0x0 - 0xffffffffffffffff ??? unknown-arch  <00000000000000000000000000000000> ???
+       0x19b2ec000 -        0x19d8b2ff9 WebCore arm64e  <3b27a43da8083d46b1bf590d9e381e04> /System/Library/PrivateFrameworks/WebCore.framework/WebCore
+       0x186758000 -        0x186b39fee CoreFoundation arm64e  <9262f9194ad7362f9019fd2d173d565a> /System/Library/Frameworks/CoreFoundation.framework/CoreFoundation
+       0x187352000 -        0x187c98ff3 Foundation arm64e  <d28717a6ffed3fc7ae38a04fb93f3730> /System/Library/Frameworks/Foundation.framework/Foundation
+       0x1fd3da000 -        0x1fd419fe6 libxpc.dylib arm64e  <d2be4775d4c230fdb2f299de0d28aa07> /usr/lib/system/libxpc.dylib
+       0x19a6f9000 -        0x19b2ebfe2 WebKit arm64e  <4c710e7256863794b237621ba8eafa01> /System/Library/Frameworks/WebKit.framework/WebKit
+       0x2160ee000 -        0x21616f86f dyld arm64e  <27b053499692326093c7b5561bcf1782> /usr/lib/dyld
+       0x1c5481000 -        0x1c54b7ffb libsystem_kernel.dylib arm64e  <b1594f8cf6e031da8732ae66a3a76df7> /usr/lib/system/libsystem_kernel.dylib
+       0x1fd3bf000 -        0x1fd3caff7 libsystem_pthread.dylib arm64e  <4ba6c7bf2ada3156b95018fb6fbd844f> /usr/lib/system/libsystem_pthread.dylib
+
+EOF
+

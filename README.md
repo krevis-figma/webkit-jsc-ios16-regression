@@ -1,24 +1,22 @@
-# webkit-jsc-ios16-regression
+# webkit-jsc-ios16-regression: Demo of a regression in iOS 16 beta 1+2: running WASM > 10 MB asserts in `slow_path_wasm_loop_osr`.
 
-## Demo of a regression in iOS 16 beta 1+2: running WASM > 10 MB asserts in `slow_path_wasm_loop_osr`.
-
-If you have a WebAssembly module with > 10 MB of code, containing code with a hot loop, WebKit fails an internal assertion when trying to JIT.
+If you have a WebAssembly module with > 10 MB of code, containing code with a hot loop, WebKit fails an internal assertion inside JavaScriptCore.
 
 As a result, the `com.apple.WebKit.WebContent` process crashes, and Safari/WKWebView shows an error message.
 
-### Steps
+## Steps
 
 1. Get an iOS/iPadOS device or simulator running iOS 16 Developer Beta 1 or 2.
 2. In Safari, visit [loop-bad.html](loop-bad.html).
 
-#### Expected: 
+### Expected: 
 Web page loads and says "Loading wasm... Loaded. Success!"
-#### Actual:
+### Actual:
 `WebContent` crashes. Safari shows an error: "A problem repeatedly occurred on *URL*".
 
 See [crash-beta2.txt](crash-beta2.txt) for a sample crash log.
 
-### Regression
+## Regression
 
 The page loads and runs correctly on iOS 15.5.
 
@@ -26,20 +24,20 @@ It also runs correctly on macOS 12.4 and 13.0 Developer Beta.
 
 If the `wasm` file has < 10 MB of code, there is no crash. See [loop-good.html](loop-good.html).
 
-### Notes
+## Notes
 
-#### Cause
+### Cause
 
 The failure is caused by WebKit commit [`e38fc8815`](https://github.com/WebKit/WebKit/commit/e38fc8815d7063e888a1eb3ecb2c7c93ba3fbe84) for bug [234587](https://bugs.webkit.org/show_bug.cgi?id=234587) "Allow loop tier up to the Air tier".
 
-As of that commit, the crash is at `JavaScriptCore/wasm/WasmSlowPaths.cpp:203`:
+As of that commit, the crash is at [`JavaScriptCore/wasm/WasmSlowPaths.cpp:203`](https://github.com/WebKit/WebKit/commit/e38fc8815d7063e888a1eb3ecb2c7c93ba3fbe84#diff-8ef011487f54489d434fd97bb37b55273a415ddaf4968f3760a0af07ae6b855dR203):
 ```cpp
     RELEASE_ASSERT(osrEntryScratchBufferSize >= osrEntryData.values.size());
 ```
 
 `osrEntryScratchBufferSize` is 0, but `osrEntryData.values.size()` is > 0.
 
-#### Explanation
+### Explanation
 
 Apparently there are two different modes for the "BBQ" JIT: "Air" and "B3".  Normally, Air is used.
 
@@ -51,11 +49,11 @@ However, on iOS only, WASM modules over 10 MB fall back to B3. See `JavaScriptCo
 
 The commit above added code in `WASM_SLOW_PATH_DECL(loop_osr)` that assumes that if `Options::wasmLLIntTiersUpToBBQ()` is true, then Air must have been used. That is not the case on iOS when the module is over 10 MB.
 
-#### Potential fix
+### Potential fix
 
 Make this code path check whether B3 was forced, exactly the same as the code in `JavaScriptCore/wasm/WasmBBQPlan.cpp` that checks `webAssemblyBBQAirModeThreshold`. If it was, fall back to the older code in the `else` clause below.
 
-#### Tests
+### Tests
 
 Apparently, none of the JavaScriptCore automated tests cover the code path that falls back from Air to B3.
 
