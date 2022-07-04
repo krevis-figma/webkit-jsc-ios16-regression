@@ -11,6 +11,8 @@ Files are hosted at [https://krevis-figma.github.io/webkit-jsc-ios16-regression/
 1. Get an iOS/iPadOS device or simulator running iOS 16 Developer Beta 1 or 2.
 2. In Safari, visit [loop-bad.html](https://krevis-figma.github.io/webkit-jsc-ios16-regression/loop-bad.html).
 
+This loads a WebAssembly module `loop-bad.wasm` and calls a function that runs a simple loop. It's the same code as in JavaScriptCore test [`stress/osr-entry-basic.js`](https://github.com/WebKit/WebKit/blob/main/JSTests/wasm/stress/osr-entry-basic.js). The module contains other unused functions to make it > 10 MB large.
+
 ### Expected: 
 Web page loads and says "Loading wasm... Loaded. Success!"
 ### Actual:
@@ -32,6 +34,7 @@ When using a `WKWebView` in an app, the behavior is the same as in Safari.
 
 ### References
 
+WebKit bug [242294](https://bugs.webkit.org/show_bug.cgi?id=242294)
 Apple Feedback Reporter IDs: FB10107783, FB10120166
 
 ### Cause
@@ -74,179 +77,17 @@ The bad commit added code in `WASM_SLOW_PATH_DECL(loop_osr)` that assumes that i
 
 ### Potential fix
 
+A [potential fix](3-fix.patch):
+
 Make this code path check whether B3 was forced, exactly the same as the code in `JavaScriptCore/wasm/WasmBBQPlan.cpp` that checks `webAssemblyBBQAirModeThreshold`. If it was, fall back to the older code in the `else` clause below.
+
 
 ### Tests
 
 Apparently, none of the JavaScriptCore automated tests cover the code path that falls back from Air to B3.
 
-To see failures, run `./Tools/Scripts/run-javascriptcore-tests --env-vars JSC_webAssemblyBBQAirModeThreshold=1`.
+To see failures, run `./Tools/Scripts/run-javascriptcore-tests --env-vars JSC_webAssemblyBBQAirModeThreshold=1`.  I got 162 failures, all of which are fixed by the patch above.
 
-I got the following failures:
+Here's a [patch to add a regression test](1-add-regression-test.patch) for this bug.
 
-```
-** The following JSC stress test failures have been introduced:
-	microbenchmarks/interpreter-wasm.js.default
-	microbenchmarks/memcpy-wasm-large.js.bytecode-cache
-	microbenchmarks/memcpy-wasm-large.js.default
-	microbenchmarks/memcpy-wasm-large.js.dfg-eager
-	microbenchmarks/memcpy-wasm-large.js.dfg-eager-no-cjit-validate
-	microbenchmarks/memcpy-wasm-large.js.eager-jettison-no-cjit
-	microbenchmarks/memcpy-wasm-large.js.ftl-eager
-	microbenchmarks/memcpy-wasm-large.js.ftl-eager-no-cjit-b3o1
-	microbenchmarks/memcpy-wasm-large.js.ftl-no-cjit-b3o0
-	microbenchmarks/memcpy-wasm-large.js.ftl-no-cjit-no-inline-validate
-	microbenchmarks/memcpy-wasm-large.js.ftl-no-cjit-no-put-stack-validate
-	microbenchmarks/memcpy-wasm-large.js.ftl-no-cjit-small-pool
-	microbenchmarks/memcpy-wasm-large.js.ftl-no-cjit-validate-sampling-profiler
-	microbenchmarks/memcpy-wasm-large.js.mini-mode
-	microbenchmarks/memcpy-wasm-large.js.no-cjit-validate-phases
-	microbenchmarks/memcpy-wasm-large.js.no-ftl
-	microbenchmarks/memcpy-wasm-large.js.no-llint
-	microbenchmarks/memcpy-wasm-medium.js.ftl-eager
-	microbenchmarks/memcpy-wasm-small.js.dfg-eager-no-cjit-validate
-	microbenchmarks/memcpy-wasm-small.js.eager-jettison-no-cjit
-	microbenchmarks/memcpy-wasm-small.js.ftl-eager-no-cjit-b3o1
-	microbenchmarks/memcpy-wasm-small.js.ftl-no-cjit-b3o0
-	microbenchmarks/memcpy-wasm-small.js.ftl-no-cjit-no-inline-validate
-	microbenchmarks/memcpy-wasm-small.js.ftl-no-cjit-no-put-stack-validate
-	microbenchmarks/memcpy-wasm-small.js.ftl-no-cjit-small-pool
-	microbenchmarks/memcpy-wasm-small.js.ftl-no-cjit-validate-sampling-profiler
-	microbenchmarks/memcpy-wasm-small.js.no-cjit-validate-phases
-	microbenchmarks/memcpy-wasm.js.bytecode-cache
-	microbenchmarks/memcpy-wasm.js.default
-	microbenchmarks/memcpy-wasm.js.dfg-eager
-	microbenchmarks/memcpy-wasm.js.dfg-eager-no-cjit-validate
-	microbenchmarks/memcpy-wasm.js.eager-jettison-no-cjit
-	microbenchmarks/memcpy-wasm.js.ftl-eager
-	microbenchmarks/memcpy-wasm.js.ftl-eager-no-cjit-b3o1
-	microbenchmarks/memcpy-wasm.js.ftl-no-cjit-b3o0
-	microbenchmarks/memcpy-wasm.js.ftl-no-cjit-no-inline-validate
-	microbenchmarks/memcpy-wasm.js.ftl-no-cjit-no-put-stack-validate
-	microbenchmarks/memcpy-wasm.js.ftl-no-cjit-small-pool
-	microbenchmarks/memcpy-wasm.js.ftl-no-cjit-validate-sampling-profiler
-	microbenchmarks/memcpy-wasm.js.no-cjit-validate-phases
-	microbenchmarks/memcpy-wasm.js.no-ftl
-	microbenchmarks/memcpy-wasm.js.no-llint
-	stress/sampling-profiler-wasm.js.default
-	wasm.yaml/wasm/function-tests/br-if-loop-less-than.js.wasm-no-cjit-yes-tls-context
-	wasm.yaml/wasm/function-tests/loop-mult.js.wasm-no-cjit-yes-tls-context
-	wasm.yaml/wasm/function-tests/loop-sum.js.wasm-no-cjit-yes-tls-context
-	wasm.yaml/wasm/function-tests/memcpy-wasm-loop.js.wasm-no-cjit-yes-tls-context
-	wasm.yaml/wasm/multi-value-spec-tests/loop.wast.js.wasm-no-cjit-yes-tls-context
-	wasm.yaml/wasm/references-spec-tests/memory_copy.wast.js.wasm-eager-jettison
-	wasm.yaml/wasm/references-spec-tests/memory_copy.wast.js.wasm-no-cjit-yes-tls-context
-	wasm.yaml/wasm/references-spec-tests/memory_fill.wast.js.wasm-no-cjit-yes-tls-context
-	wasm.yaml/wasm/references-spec-tests/memory_grow.wast.js.default-wasm
-	wasm.yaml/wasm/references-spec-tests/memory_grow.wast.js.wasm-no-cjit-yes-tls-context
-	wasm.yaml/wasm/references-spec-tests/memory_grow.wast.js.wasm-no-tls-context
-	wasm.yaml/wasm/regress/llint-callee-saves-with-fast-memory.js.default-wasm
-	wasm.yaml/wasm/regress/llint-callee-saves-with-fast-memory.js.wasm-eager
-	wasm.yaml/wasm/regress/llint-callee-saves-with-fast-memory.js.wasm-eager-jettison
-	wasm.yaml/wasm/regress/llint-callee-saves-with-fast-memory.js.wasm-no-cjit-yes-tls-context
-	wasm.yaml/wasm/regress/llint-callee-saves-with-fast-memory.js.wasm-no-tls-context
-	wasm.yaml/wasm/regress/llint-callee-saves-with-fast-memory.js.wasm-slow-memory
-	wasm.yaml/wasm/regress/llint-callee-saves-without-fast-memory.js.default-wasm
-	wasm.yaml/wasm/regress/llint-callee-saves-without-fast-memory.js.wasm-eager
-	wasm.yaml/wasm/regress/llint-callee-saves-without-fast-memory.js.wasm-eager-jettison
-	wasm.yaml/wasm/regress/llint-callee-saves-without-fast-memory.js.wasm-no-cjit-yes-tls-context
-	wasm.yaml/wasm/regress/llint-callee-saves-without-fast-memory.js.wasm-no-tls-context
-	wasm.yaml/wasm/regress/llint-callee-saves-without-fast-memory.js.wasm-slow-memory
-	wasm.yaml/wasm/spec-tests/float_exprs.wast.js.wasm-no-cjit-yes-tls-context
-	wasm.yaml/wasm/spec-tests/loop.wast.js.wasm-no-cjit-yes-tls-context
-	wasm.yaml/wasm/spec-tests/memory_grow.wast.js.default-wasm
-	wasm.yaml/wasm/spec-tests/memory_grow.wast.js.wasm-no-cjit-yes-tls-context
-	wasm.yaml/wasm/spec-tests/memory_grow.wast.js.wasm-no-tls-context
-	wasm.yaml/wasm/stress/exception-liveness-tier-up.js.default-wasm
-	wasm.yaml/wasm/stress/exception-liveness-tier-up.js.wasm-eager
-	wasm.yaml/wasm/stress/exception-liveness-tier-up.js.wasm-eager-jettison
-	wasm.yaml/wasm/stress/exception-liveness-tier-up.js.wasm-no-cjit-yes-tls-context
-	wasm.yaml/wasm/stress/exception-liveness-tier-up.js.wasm-no-tls-context
-	wasm.yaml/wasm/stress/exception-liveness-tier-up.js.wasm-slow-memory
-	wasm.yaml/wasm/stress/osr-entry-basic.js.default-wasm
-	wasm.yaml/wasm/stress/osr-entry-basic.js.wasm-eager
-	wasm.yaml/wasm/stress/osr-entry-basic.js.wasm-eager-jettison
-	wasm.yaml/wasm/stress/osr-entry-basic.js.wasm-no-cjit-yes-tls-context
-	wasm.yaml/wasm/stress/osr-entry-basic.js.wasm-no-tls-context
-	wasm.yaml/wasm/stress/osr-entry-basic.js.wasm-slow-memory
-	wasm.yaml/wasm/stress/osr-entry-many-locals-f32.js.default-wasm
-	wasm.yaml/wasm/stress/osr-entry-many-locals-f32.js.wasm-eager
-	wasm.yaml/wasm/stress/osr-entry-many-locals-f32.js.wasm-eager-jettison
-	wasm.yaml/wasm/stress/osr-entry-many-locals-f32.js.wasm-no-cjit-yes-tls-context
-	wasm.yaml/wasm/stress/osr-entry-many-locals-f32.js.wasm-no-tls-context
-	wasm.yaml/wasm/stress/osr-entry-many-locals-f32.js.wasm-slow-memory
-	wasm.yaml/wasm/stress/osr-entry-many-locals-f64.js.default-wasm
-	wasm.yaml/wasm/stress/osr-entry-many-locals-f64.js.wasm-eager
-	wasm.yaml/wasm/stress/osr-entry-many-locals-f64.js.wasm-eager-jettison
-	wasm.yaml/wasm/stress/osr-entry-many-locals-f64.js.wasm-no-cjit-yes-tls-context
-	wasm.yaml/wasm/stress/osr-entry-many-locals-f64.js.wasm-no-tls-context
-	wasm.yaml/wasm/stress/osr-entry-many-locals-f64.js.wasm-slow-memory
-	wasm.yaml/wasm/stress/osr-entry-many-locals-i32.js.default-wasm
-	wasm.yaml/wasm/stress/osr-entry-many-locals-i32.js.wasm-eager
-	wasm.yaml/wasm/stress/osr-entry-many-locals-i32.js.wasm-eager-jettison
-	wasm.yaml/wasm/stress/osr-entry-many-locals-i32.js.wasm-no-cjit-yes-tls-context
-	wasm.yaml/wasm/stress/osr-entry-many-locals-i32.js.wasm-no-tls-context
-	wasm.yaml/wasm/stress/osr-entry-many-locals-i32.js.wasm-slow-memory
-	wasm.yaml/wasm/stress/osr-entry-many-locals-i64.js.default-wasm
-	wasm.yaml/wasm/stress/osr-entry-many-locals-i64.js.wasm-eager
-	wasm.yaml/wasm/stress/osr-entry-many-locals-i64.js.wasm-eager-jettison
-	wasm.yaml/wasm/stress/osr-entry-many-locals-i64.js.wasm-no-cjit-yes-tls-context
-	wasm.yaml/wasm/stress/osr-entry-many-locals-i64.js.wasm-no-tls-context
-	wasm.yaml/wasm/stress/osr-entry-many-locals-i64.js.wasm-slow-memory
-	wasm.yaml/wasm/stress/osr-entry-many-stacks-f32.js.default-wasm
-	wasm.yaml/wasm/stress/osr-entry-many-stacks-f32.js.wasm-eager
-	wasm.yaml/wasm/stress/osr-entry-many-stacks-f32.js.wasm-eager-jettison
-	wasm.yaml/wasm/stress/osr-entry-many-stacks-f32.js.wasm-no-cjit-yes-tls-context
-	wasm.yaml/wasm/stress/osr-entry-many-stacks-f32.js.wasm-no-tls-context
-	wasm.yaml/wasm/stress/osr-entry-many-stacks-f32.js.wasm-slow-memory
-	wasm.yaml/wasm/stress/osr-entry-many-stacks-f64.js.default-wasm
-	wasm.yaml/wasm/stress/osr-entry-many-stacks-f64.js.wasm-eager
-	wasm.yaml/wasm/stress/osr-entry-many-stacks-f64.js.wasm-eager-jettison
-	wasm.yaml/wasm/stress/osr-entry-many-stacks-f64.js.wasm-no-cjit-yes-tls-context
-	wasm.yaml/wasm/stress/osr-entry-many-stacks-f64.js.wasm-no-tls-context
-	wasm.yaml/wasm/stress/osr-entry-many-stacks-f64.js.wasm-slow-memory
-	wasm.yaml/wasm/stress/osr-entry-many-stacks-i32.js.default-wasm
-	wasm.yaml/wasm/stress/osr-entry-many-stacks-i32.js.wasm-eager
-	wasm.yaml/wasm/stress/osr-entry-many-stacks-i32.js.wasm-eager-jettison
-	wasm.yaml/wasm/stress/osr-entry-many-stacks-i32.js.wasm-no-cjit-yes-tls-context
-	wasm.yaml/wasm/stress/osr-entry-many-stacks-i32.js.wasm-no-tls-context
-	wasm.yaml/wasm/stress/osr-entry-many-stacks-i32.js.wasm-slow-memory
-	wasm.yaml/wasm/stress/osr-entry-many-stacks-i64.js.default-wasm
-	wasm.yaml/wasm/stress/osr-entry-many-stacks-i64.js.wasm-eager
-	wasm.yaml/wasm/stress/osr-entry-many-stacks-i64.js.wasm-eager-jettison
-	wasm.yaml/wasm/stress/osr-entry-many-stacks-i64.js.wasm-no-cjit-yes-tls-context
-	wasm.yaml/wasm/stress/osr-entry-many-stacks-i64.js.wasm-no-tls-context
-	wasm.yaml/wasm/stress/osr-entry-many-stacks-i64.js.wasm-slow-memory
-	wasm.yaml/wasm/stress/osr-entry-with-loop-arguments.js.default-wasm
-	wasm.yaml/wasm/stress/osr-entry-with-loop-arguments.js.wasm-eager
-	wasm.yaml/wasm/stress/osr-entry-with-loop-arguments.js.wasm-eager-jettison
-	wasm.yaml/wasm/stress/osr-entry-with-loop-arguments.js.wasm-no-cjit-yes-tls-context
-	wasm.yaml/wasm/stress/osr-entry-with-loop-arguments.js.wasm-no-tls-context
-	wasm.yaml/wasm/stress/osr-entry-with-loop-arguments.js.wasm-slow-memory
-	wasm.yaml/wasm/stress/top-most-enclosing-stack.js.wasm-eager
-	wasm.yaml/wasm/stress/top-most-enclosing-stack.js.wasm-no-cjit-yes-tls-context
-	wasm.yaml/wasm/wast-tests/harness.js.(osr-entry-inner-loop-branch-above-no-consts.wasm)-default-wasm
-	wasm.yaml/wasm/wast-tests/harness.js.(osr-entry-inner-loop-branch-above-no-consts.wasm)-wasm-eager
-	wasm.yaml/wasm/wast-tests/harness.js.(osr-entry-inner-loop-branch-above-no-consts.wasm)-wasm-eager-jettison
-	wasm.yaml/wasm/wast-tests/harness.js.(osr-entry-inner-loop-branch-above-no-consts.wasm)-wasm-no-cjit-yes-tls-context
-	wasm.yaml/wasm/wast-tests/harness.js.(osr-entry-inner-loop-branch-above-no-consts.wasm)-wasm-no-tls-context
-	wasm.yaml/wasm/wast-tests/harness.js.(osr-entry-inner-loop-branch-above-no-consts.wasm)-wasm-slow-memory
-	wasm.yaml/wasm/wast-tests/harness.js.(osr-entry-inner-loop-branch-above.wasm)-default-wasm
-	wasm.yaml/wasm/wast-tests/harness.js.(osr-entry-inner-loop-branch-above.wasm)-wasm-eager
-	wasm.yaml/wasm/wast-tests/harness.js.(osr-entry-inner-loop-branch-above.wasm)-wasm-eager-jettison
-	wasm.yaml/wasm/wast-tests/harness.js.(osr-entry-inner-loop-branch-above.wasm)-wasm-no-cjit-yes-tls-context
-	wasm.yaml/wasm/wast-tests/harness.js.(osr-entry-inner-loop-branch-above.wasm)-wasm-no-tls-context
-	wasm.yaml/wasm/wast-tests/harness.js.(osr-entry-inner-loop-branch-above.wasm)-wasm-slow-memory
-	wasm.yaml/wasm/wast-tests/harness.js.(osr-entry-inner-loop.wasm)-default-wasm
-	wasm.yaml/wasm/wast-tests/harness.js.(osr-entry-inner-loop.wasm)-wasm-eager
-	wasm.yaml/wasm/wast-tests/harness.js.(osr-entry-inner-loop.wasm)-wasm-eager-jettison
-	wasm.yaml/wasm/wast-tests/harness.js.(osr-entry-inner-loop.wasm)-wasm-no-cjit-yes-tls-context
-	wasm.yaml/wasm/wast-tests/harness.js.(osr-entry-inner-loop.wasm)-wasm-no-tls-context
-	wasm.yaml/wasm/wast-tests/harness.js.(osr-entry-inner-loop.wasm)-wasm-slow-memory
-	wasm.yaml/wasm/wast-tests/harness.js.(osr-entry-multiple-enclosed-contexts.wasm)-default-wasm
-	wasm.yaml/wasm/wast-tests/harness.js.(osr-entry-multiple-enclosed-contexts.wasm)-wasm-eager
-	wasm.yaml/wasm/wast-tests/harness.js.(osr-entry-multiple-enclosed-contexts.wasm)-wasm-eager-jettison
-	wasm.yaml/wasm/wast-tests/harness.js.(osr-entry-multiple-enclosed-contexts.wasm)-wasm-no-cjit-yes-tls-context
-	wasm.yaml/wasm/wast-tests/harness.js.(osr-entry-multiple-enclosed-contexts.wasm)-wasm-no-tls-context
-	wasm.yaml/wasm/wast-tests/harness.js.(osr-entry-multiple-enclosed-contexts.wasm)-wasm-slow-memory
-```
+Also, it seems like it would be a good idea to test the fallback-to-B3 path more widely. Here's a [patch to do this in the stress tests](2-add-stress-tests.patch), similar to the existing "wasm-b3" and "wasm-air" tests, neither of which caught this bug.

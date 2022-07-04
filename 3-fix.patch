@@ -1,0 +1,82 @@
+From 7cd98ad5ecce96abedf2d70ca07764b8d6368acc Mon Sep 17 00:00:00 2001
+From: Kurt Revis <krevis@figma.com>
+Date: Mon, 4 Jul 2022 16:39:20 -0700
+Subject: [PATCH] Potential fix for 242294.
+
+In `WASM_SLOW_PATH_DECL(loop_osr)`, when B3 mode is forced for this module, use the older path from before the fix for 234587.
+---
+ Source/JavaScriptCore/wasm/WasmBBQPlan.cpp   | 23 +++++++++++---------
+ Source/JavaScriptCore/wasm/WasmBBQPlan.h     |  2 ++
+ Source/JavaScriptCore/wasm/WasmSlowPaths.cpp |  2 +-
+ 3 files changed, 16 insertions(+), 11 deletions(-)
+
+diff --git a/Source/JavaScriptCore/wasm/WasmBBQPlan.cpp b/Source/JavaScriptCore/wasm/WasmBBQPlan.cpp
+index 1e491a779043..e7c9b1d208b7 100644
+--- a/Source/JavaScriptCore/wasm/WasmBBQPlan.cpp
++++ b/Source/JavaScriptCore/wasm/WasmBBQPlan.cpp
+@@ -60,6 +60,18 @@ BBQPlan::BBQPlan(Context* context, Ref<ModuleInformation> moduleInformation, uin
+     dataLogLnIf(WasmBBQPlanInternal::verbose, "Starting BBQ plan for ", functionIndex);
+ }
+ 
++bool BBQPlan::forceUsingB3(Ref<ModuleInformation> moduleInformation) {
++    // FIXME: Some webpages use very large Wasm module, and it exhausts all executable memory in ARM64 devices since the size of executable memory region is only limited to 128MB.
++    // The long term solution should be to introduce a Wasm interpreter. But as a short term solution, we introduce heuristics to switch back to BBQ B3 at the sacrifice of start-up time,
++    // as BBQ Air bloats such lengthy Wasm code and will consume a large amount of executable memory.
++    bool forceUsingB3 = false;
++    if (Options::webAssemblyBBQAirModeThreshold() && moduleInformation->codeSectionSize >= Options::webAssemblyBBQAirModeThreshold())
++        forceUsingB3 = true;
++    else if (!Options::wasmBBQUsesAir())
++        forceUsingB3 = true;
++    return forceUsingB3;
++}
++
+ bool BBQPlan::prepareImpl()
+ {
+     const auto& functions = m_moduleInformation->functions;
+@@ -214,16 +226,7 @@ std::unique_ptr<InternalFunction> BBQPlan::compileFunction(uint32_t functionInde
+     ASSERT_UNUSED(functionIndexSpace, m_moduleInformation->typeIndexFromFunctionIndexSpace(functionIndexSpace) == typeIndex);
+     Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileResult;
+ 
+-    // FIXME: Some webpages use very large Wasm module, and it exhausts all executable memory in ARM64 devices since the size of executable memory region is only limited to 128MB.
+-    // The long term solution should be to introduce a Wasm interpreter. But as a short term solution, we introduce heuristics to switch back to BBQ B3 at the sacrifice of start-up time,
+-    // as BBQ Air bloats such lengthy Wasm code and will consume a large amount of executable memory.
+-    bool forceUsingB3 = false;
+-    if (Options::webAssemblyBBQAirModeThreshold() && m_moduleInformation->codeSectionSize >= Options::webAssemblyBBQAirModeThreshold())
+-        forceUsingB3 = true;
+-    else if (!Options::wasmBBQUsesAir())
+-        forceUsingB3 = true;
+-
+-    if (forceUsingB3)
++    if (forceUsingB3(m_moduleInformation))
+         parseAndCompileResult = parseAndCompileB3(context, function, signature, unlinkedWasmToWasmCalls, m_moduleInformation.get(), m_mode, CompilationMode::BBQMode, functionIndex, m_hasExceptionHandlers, UINT32_MAX, tierUp);
+     else
+         parseAndCompileResult = parseAndCompileAir(context, function, signature, unlinkedWasmToWasmCalls, m_moduleInformation.get(), m_mode, functionIndex, m_hasExceptionHandlers, tierUp);
+diff --git a/Source/JavaScriptCore/wasm/WasmBBQPlan.h b/Source/JavaScriptCore/wasm/WasmBBQPlan.h
+index 4f6c2486df4f..4134b7e69308 100644
+--- a/Source/JavaScriptCore/wasm/WasmBBQPlan.h
++++ b/Source/JavaScriptCore/wasm/WasmBBQPlan.h
+@@ -75,6 +75,8 @@ public:
+         return Base::parseAndValidateModule(m_source.data(), m_source.size());
+     }
+ 
++    static bool forceUsingB3(Ref<ModuleInformation>);
++
+ private:
+     bool prepareImpl() final;
+     void compileFunction(uint32_t functionIndex) final;
+diff --git a/Source/JavaScriptCore/wasm/WasmSlowPaths.cpp b/Source/JavaScriptCore/wasm/WasmSlowPaths.cpp
+index 440650425e8f..c278335ecc15 100644
+--- a/Source/JavaScriptCore/wasm/WasmSlowPaths.cpp
++++ b/Source/JavaScriptCore/wasm/WasmSlowPaths.cpp
+@@ -188,7 +188,7 @@ WASM_SLOW_PATH_DECL(loop_osr)
+     unsigned loopOSREntryBytecodeOffset = callee->bytecodeOffset(pc);
+     const auto& osrEntryData = tierUpCounter.osrEntryDataForLoop(loopOSREntryBytecodeOffset);
+ 
+-    if (Options::wasmLLIntTiersUpToBBQ()) {
++    if (Options::wasmLLIntTiersUpToBBQ() && !Wasm::BBQPlan::forceUsingB3(const_cast<Wasm::ModuleInformation&>(instance->module().moduleInformation()))) {
+         if (!jitCompileAndSetHeuristics(callee, instance))
+             WASM_RETURN_TWO(nullptr, nullptr);
+ 
+-- 
+2.36.1
+

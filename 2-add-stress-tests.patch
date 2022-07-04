@@ -1,0 +1,66 @@
+From 899b4f17d255839a4c4151d158739a54d48804e7 Mon Sep 17 00:00:00 2001
+From: Kurt Revis <krevis@figma.com>
+Date: Mon, 4 Jul 2022 16:36:39 -0700
+Subject: [PATCH] In stress tests, add "wasm-b3-fallback-from-air" to test the
+ problem code path in 242294
+
+In parallel with existing "wasm-b3" and "wasm-air", neither of which caught this bug.
+---
+ Tools/Scripts/run-jsc-stress-tests | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/Tools/Scripts/run-jsc-stress-tests b/Tools/Scripts/run-jsc-stress-tests
+index d3bf11208489..d868b98ac1f5 100755
+--- a/Tools/Scripts/run-jsc-stress-tests
++++ b/Tools/Scripts/run-jsc-stress-tests
+@@ -1743,6 +1743,7 @@ def runWebAssembly
+         if $isFTLPlatform
+             run("wasm-b3", "-m", "--useWasmLLInt=false", "--wasmBBQUsesAir=false", *FTL_OPTIONS)
+             run("wasm-air", "-m", "--useWasmLLInt=false", "--useRandomizingExecutableIslandAllocation=true", *FTL_OPTIONS)
++            run("wasm-b3-fallback-from-air", "-m", "--webAssemblyBBQAirModeThreshold=1", *FTL_OPTIONS)
+         end
+     end
+ end
+@@ -1772,6 +1773,7 @@ def runWebAssemblyJetStream2
+         if $isFTLPlatform
+             run("wasm-b3", "--useWasmLLInt=false", "--wasmBBQUsesAir=false", *FTL_OPTIONS)
+             run("wasm-air", "--useWasmLLInt=false", "--useRandomizingExecutableIslandAllocation=true", *FTL_OPTIONS)
++            run("wasm-b3-fallback-from-air", "--webAssemblyBBQAirModeThreshold=1", *FTL_OPTIONS)
+         end
+     end
+ end
+@@ -1798,6 +1800,7 @@ def runWebAssemblySuite(*optionalTestSpecificOptions)
+         if $isFTLPlatform
+             run("wasm-b3", "--useWasmLLInt=false", "--wasmBBQUsesAir=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
+             run("wasm-air", "--useWasmLLInt=false", "--useRandomizingExecutableIslandAllocation=true", *(FTL_OPTIONS + optionalTestSpecificOptions))
++            run("wasm-b3-fallback-from-air", "--webAssemblyBBQAirModeThreshold=1", *(FTL_OPTIONS + optionalTestSpecificOptions))
+         end
+     end
+ end
+@@ -1832,6 +1835,7 @@ def runWebAssemblyWithHarness(*optionalTestSpecificOptions)
+         if $isFTLPlatform
+             runHarnessTest("wasm-b3", "--useWasmLLInt=false", "--wasmBBQUsesAir=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
+             runHarnessTest("wasm-no-air", "--useWasmLLInt=false", "--useRandomizingExecutableIslandAllocation=true", *(FTL_OPTIONS + optionalTestSpecificOptions))
++            runHarnessTest("wasm-b3-fallback-from-air", "--webAssemblyBBQAirModeThreshold=1", *(FTL_OPTIONS + optionalTestSpecificOptions))
+         end
+     end
+ end
+@@ -1854,6 +1858,7 @@ def runWebAssemblyEmscripten(mode)
+         if $isFTLPlatform
+             run("wasm-b3", "--useWasmLLInt=false", "--wasmBBQUsesAir=false", *FTL_OPTIONS)
+             run("wasm-air", "--useWasmLLInt=false", "--useRandomizingExecutableIslandAllocation=true", *FTL_OPTIONS)
++            run("wasm-b3-fallback-from-air", "--webAssemblyBBQAirModeThreshold=1", *FTL_OPTIONS)
+         end
+     end
+ end
+@@ -1883,6 +1888,7 @@ def runWebAssemblySpecTestBase(mode, specHarnessPath, *optionalTestSpecificOptio
+       if $isFTLPlatform
+           runWithOutputHandler("wasm-b3", noisyOutputHandler, specHarnessJsPath, "--useWasmLLInt=false", "--wasmBBQUsesAir=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
+           runWithOutputHandler("wasm-air", noisyOutputHandler, specHarnessJsPath, "--useWasmLLInt=false", "--useRandomizingExecutableIslandAllocation=true", *(FTL_OPTIONS + optionalTestSpecificOptions))
++          runWithOutputHandler("wasm-b3-fallback-from-air", noisyOutputHandler, specHarnessJsPath, "--webAssemblyBBQAirModeThreshold=1", *(FTL_OPTIONS + optionalTestSpecificOptions))
+       end
+     end
+ end
+-- 
+2.36.1
+
