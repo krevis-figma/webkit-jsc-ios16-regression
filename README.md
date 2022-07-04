@@ -2,12 +2,14 @@
 
 In iOS 16 Developer Beta 1 or 2, if you have a WebAssembly module with > 10 MB of code, containing code with a hot loop, WebKit fails an internal assertion inside JavaScriptCore.
 
-As a result, the `com.apple.WebKit.WebContent` process crashes, and Safari/WKWebView shows an error message.
+As a result, the `com.apple.WebKit.WebContent` process crashes, and Safari or WKWebView show an error message.
 
 ## Steps
 
+Files are hosted at [https://krevis-figma.github.io/webkit-jsc-ios16-regression/](https://krevis-figma.github.io/webkit-jsc-ios16-regression/).
+
 1. Get an iOS/iPadOS device or simulator running iOS 16 Developer Beta 1 or 2.
-2. In Safari, visit [loop-bad.html](loop-bad.html).
+2. In Safari, visit [loop-bad.html](https://krevis-figma.github.io/webkit-jsc-ios16-regression/loop-bad.html).
 
 ### Expected: 
 Web page loads and says "Loading wasm... Loaded. Success!"
@@ -18,11 +20,13 @@ See [crash-beta2.txt](crash-beta2.txt) for a sample crash log.
 
 ## Regression
 
-The page loads and runs correctly on iOS 15.5.
+The page loads and runs correctly on iOS 15.5. It's broken in iOS 16 Developer Beta 1 and 2.
 
-It also runs correctly on macOS 12.4 and 13.0 Developer Beta.
+It also runs correctly in Safari in macOS 12.4 and macOS 13.0 Developer Beta.
 
-If the `wasm` file has < 10 MB of code, there is no crash. See [loop-good.html](loop-good.html).
+If the `wasm` file has < 10 MB of code, there is no crash. See [loop-good.html](https://krevis-figma.github.io/webkit-jsc-ios16-regression/loop-good.html).
+
+When using a `WKWebView` in an app, the behavior is the same as in Safari.
 
 ## Notes
 
