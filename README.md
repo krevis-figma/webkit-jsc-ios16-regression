@@ -1,6 +1,6 @@
-# webkit-jsc-ios16-regression: Demo of a regression in iOS 16 beta 1+2: running WASM > 10 MB asserts in `slow_path_wasm_loop_osr`.
+# Regression in iOS 16 beta 1 + 2: running WASM > 10 MB asserts in `slow_path_wasm_loop_osr`
 
-If you have a WebAssembly module with > 10 MB of code, containing code with a hot loop, WebKit fails an internal assertion inside JavaScriptCore.
+In iOS 16 Developer Beta 1 or 2, if you have a WebAssembly module with > 10 MB of code, containing code with a hot loop, WebKit fails an internal assertion inside JavaScriptCore.
 
 As a result, the `com.apple.WebKit.WebContent` process crashes, and Safari/WKWebView shows an error message.
 
@@ -39,15 +39,30 @@ As of that commit, the crash is at [`JavaScriptCore/wasm/WasmSlowPaths.cpp:203`]
 
 ### Explanation
 
-Apparently there are two different modes for the "BBQ" JIT: "Air" and "B3".  Normally, Air is used.
+I'm not familiar with the JavaScriptCore JIT implementation, but here's what I've gleaned:
 
-However, on iOS only, WASM modules over 10 MB fall back to B3. See `JavaScriptCore/runtime/OptionsList.h`:
+Apparently there are two different modes for the "BBQ" JIT: "Air" and "B3".  
 
-```
+Normally, Air is used. However, on iOS, WASM modules over 10 MB fall back to B3. See `JavaScriptCore/runtime/OptionsList.h`:
+
+```cpp
     v(Size, webAssemblyBBQAirModeThreshold, isIOS() ? (10 * MB) : 0, Normal, "If 0, we always use BBQ Air. If Wasm module code size hits this threshold, we compile Wasm module with B3 BBQ mode.") \
 ```
 
-The commit above added code in `WASM_SLOW_PATH_DECL(loop_osr)` that assumes that if `Options::wasmLLIntTiersUpToBBQ()` is true, then Air must have been used. That is not the case on iOS when the module is over 10 MB.
+and the code that checks the flag in `JavaScriptCore/wasm/WasmBBQPlan.cpp`:
+
+```cpp
+    // FIXME: Some webpages use very large Wasm module, and it exhausts all executable memory in ARM64 devices since the size of executable memory region is only limited to 128MB.
+    // The long term solution should be to introduce a Wasm interpreter. But as a short term solution, we introduce heuristics to switch back to BBQ B3 at the sacrifice of start-up time,
+    // as BBQ Air bloats such lengthy Wasm code and will consume a large amount of executable memory.
+    bool forceUsingB3 = false;
+    if (Options::webAssemblyBBQAirModeThreshold() && m_moduleInformation->codeSectionSize >= Options::webAssemblyBBQAirModeThreshold())
+        forceUsingB3 = true;
+    else if (!Options::wasmBBQUsesAir())
+        forceUsingB3 = true;
+```
+
+The bad commit added code in `WASM_SLOW_PATH_DECL(loop_osr)` that assumes that if `Options::wasmLLIntTiersUpToBBQ()` is true, then Air must have been used. That is not the case when `forceUsingB3` is true.
 
 ### Potential fix
 
