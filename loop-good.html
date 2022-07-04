@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>iOS 16 WASM Regression - Good case</title>
+  </head>
+  <body>
+    <script>
+let print = str => {
+  var para = document.createElement('p');
+  para.appendChild(document.createTextNode(str));
+  document.body.appendChild(para);
+  console.log(str)
+}
+(async () => {
+  print('Loading wasm...');
+  const fetchPromise = fetch('loop-good.wasm');
+  const { instance } = await WebAssembly.instantiateStreaming(fetchPromise);
+  print('Loaded.');
+  const result = instance.exports.loop(100000000);
+  if (result == 987459712) {
+    print('Success!');
+  } else {
+    print('Incorrect result: ' + result);
+  }
+})();
+    </script>
+  </body>
+</html>
