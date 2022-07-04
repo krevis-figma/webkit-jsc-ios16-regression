@@ -30,9 +30,13 @@ When using a `WKWebView` in an app, the behavior is the same as in Safari.
 
 ## Notes
 
+### References
+
+Apple Feedback Reporter IDs: FB10107783, FB10120166
+
 ### Cause
 
-The failure is caused by WebKit commit [`e38fc8815`](https://github.com/WebKit/WebKit/commit/e38fc8815d7063e888a1eb3ecb2c7c93ba3fbe84) for bug [234587](https://bugs.webkit.org/show_bug.cgi?id=234587) "Allow loop tier up to the Air tier".
+The failure was caused by WebKit commit [`e38fc8815`](https://github.com/WebKit/WebKit/commit/e38fc8815d7063e888a1eb3ecb2c7c93ba3fbe84) for bug [234587](https://bugs.webkit.org/show_bug.cgi?id=234587) "Allow loop tier up to the Air tier".
 
 As of that commit, the crash is at [`JavaScriptCore/wasm/WasmSlowPaths.cpp:203`](https://github.com/WebKit/WebKit/commit/e38fc8815d7063e888a1eb3ecb2c7c93ba3fbe84#diff-8ef011487f54489d434fd97bb37b55273a415ddaf4968f3760a0af07ae6b855dR203):
 ```cpp
