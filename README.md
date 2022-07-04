@@ -35,6 +35,7 @@ When using a `WKWebView` in an app, the behavior is the same as in Safari.
 ### References
 
 WebKit bug [242294](https://bugs.webkit.org/show_bug.cgi?id=242294)
+
 Apple Feedback Reporter IDs: FB10107783, FB10120166
 
 ### Cause
